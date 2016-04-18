@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal">
+
+
+        <Button
+            android:layout_weight="33"
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:id="@+id/imageButton"
+            android:layout_gravity="center_vertical"
+            android:text="Current Game" />
+
+        <Button
+            android:layout_weight="33"
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:id="@+id/imageButton2"
+            android:layout_gravity="center_vertical"
+            android:text="Creat Game" />
+
+        <Button
+            android:layout_weight="33"
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:id="@+id/imageButton3"
+            android:layout_gravity="center_vertical"
+            android:text="Find Team" />
+    </LinearLayout>
+</LinearLayout>
