@@ -64,30 +64,12 @@
         android:layout_alignParentEnd="true"
         android:hint="Age" />
 
-    <RadioGroup android:layout_height="wrap_content" android:id="@+id/gender_group"
-        android:layout_width="match_parent">
-
-    </RadioGroup>
-
-    <RadioButton android:text="Male"
-        android:layout_width="wrap_content" android:id="@+id/radio0"
-        android:layout_height="wrap_content" android:checked="true"
-        android:layout_below="@+id/etAge"
-        android:layout_alignParentStart="true"></RadioButton>
-
-    <RadioButton android:text="Female"
-        android:layout_width="wrap_content" android:id="@+id/radio1"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="29dp"
-        android:layout_alignTop="@+id/radio0"
-        android:layout_toEndOf="@+id/radio0"></RadioButton>
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Register"
         android:id="@+id/bRegister"
-        android:layout_below="@+id/radio0"
         android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/etAge" />
+        android:layout_alignEnd="@+id/etAge"
+        android:layout_below="@+id/etAge" />
 </RelativeLayout>
