@@ -1,6 +1,7 @@
 package edu.wpi.zqinxhao.playerpooling;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -53,11 +54,13 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final String password = etPassword.getText().toString();
                 final String hashPassword = EncriptionUtils.computeSHAHash(password);
-                AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
-                builder.setMessage(hashPassword)
-                        .setNegativeButton("test hash password", null)
-                        .create()
-                        .show();
+                boolean success = true;
+
+                if (success) {
+                    Intent loginIntent = new Intent(RegisterActivity.this, LoginActivity.class);
+                    RegisterActivity.this.startActivity(loginIntent);
+                }
+
             }
         });
     }
