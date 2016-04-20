@@ -24,7 +24,20 @@ public class DynamoDBManager {
 
         }
     }
-    public boolean authenticateUser(User user){
-        return true;
+    public boolean authenticateUser(String username, String passwordEncrption){
+
+        try {
+            AmazonDynamoDB ddb = LoginActivity.getAmzClientManager().getDDB();
+            DynamoDBMapper mapper = new DynamoDBMapper(ddb);
+            User user=mapper.load(User.class, username);
+//            if(user.getPassword().equals(passwordEncrption)){
+//                return true;
+//            }else{
+//                return false;
+//            }
+        }catch(AmazonServiceException ex){
+            Log.e(TAG, "Error when authenticate User");
+
+        }
     }
 }
