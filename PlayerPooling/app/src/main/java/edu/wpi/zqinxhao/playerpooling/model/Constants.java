@@ -1,4 +1,4 @@
-package edu.wpi.zqinxhao.playerpooling;
+package edu.wpi.zqinxhao.playerpooling.model;
 
 /**
  * Created by zishanqin on 4/20/16.

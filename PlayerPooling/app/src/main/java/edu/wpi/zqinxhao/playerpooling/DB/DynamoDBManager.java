@@ -10,9 +10,7 @@ import edu.wpi.zqinxhao.playerpooling.LoginActivity;
 import edu.wpi.zqinxhao.playerpooling.model.EncriptionUtils;
 import edu.wpi.zqinxhao.playerpooling.model.User;
 
-/**
- * Created by zishanqin on 4/20/16.
- */
+
 public class DynamoDBManager {
     private  static final String TAG="DynamoDbManager";
     public static void insertUser(User userInserted){

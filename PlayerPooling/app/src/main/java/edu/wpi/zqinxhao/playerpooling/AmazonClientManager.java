@@ -7,6 +7,8 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 
+import edu.wpi.zqinxhao.playerpooling.model.Constants;
+
 public class AmazonClientManager {
     private static final String LOG_TAG="AmazonClientManager";
     private AmazonDynamoDBClient ddb=null;
