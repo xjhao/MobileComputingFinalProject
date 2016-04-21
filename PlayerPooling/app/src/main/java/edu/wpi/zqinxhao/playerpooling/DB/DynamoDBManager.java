@@ -49,14 +49,14 @@ public class DynamoDBManager {
         return "";
     }
 
-    public boolean authenticateUser(String username, String password)throws AmazonServiceException{
+    public static boolean authenticateUser(String userEmail, String userPwd)throws AmazonServiceException{
 
         try {
-            String passwordEncrption= EncriptionUtils.computeSHAHash(password);
+            //String passwordEncrption= EncriptionUtils.computeSHAHash(password);
             AmazonDynamoDBClient ddb = LoginActivity.getAmzClientManager().getDDB();
             DynamoDBMapper mapper = new DynamoDBMapper(ddb);
-            User user=mapper.load(User.class, username);
-            if(user.getHashPassword().equals(passwordEncrption)){
+            User user=mapper.load(User.class, userEmail);
+            if(user.getHashPassword().equals(userPwd)){
                 return true;
             }else{
                 return false;
@@ -67,4 +67,6 @@ public class DynamoDBManager {
 
         }
     }
+
+
 }

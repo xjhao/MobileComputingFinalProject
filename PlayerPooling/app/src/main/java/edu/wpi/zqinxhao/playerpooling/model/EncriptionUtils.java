@@ -17,9 +17,7 @@ import java.security.NoSuchAlgorithmException;
         String hex=null;
 
         hex= Base64.encodeToString(data, 0, data.length, Base64.NO_PADDING);
-
         sb.append(hex);
-
         return sb.toString();
     }
 

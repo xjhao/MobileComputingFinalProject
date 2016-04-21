@@ -16,6 +16,8 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import edu.wpi.zqinxhao.playerpooling.DB.DynamoDBManager;
+import edu.wpi.zqinxhao.playerpooling.DB.DynamoDBManagerTask;
+import edu.wpi.zqinxhao.playerpooling.DB.DynamoDBManagerType;
 import edu.wpi.zqinxhao.playerpooling.model.EncriptionUtils;
 import edu.wpi.zqinxhao.playerpooling.model.User;
 
@@ -32,7 +34,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        AmzClientManager=LoginActivity.AmzClientManager;
+        AmzClientManager=LoginActivity.getAmzClientManager();
         final EditText etName = (EditText) findViewById(R.id.etName);
         final EditText etEmail = (EditText) findViewById(R.id.etEmail);
         final EditText etPassword = (EditText) findViewById(R.id.etPassword);
@@ -57,8 +59,9 @@ public class RegisterActivity extends AppCompatActivity {
                 user = createUser(name, email, hashPassword,age);
                 try {
                     //DynamoDBManager.insertUser(user);
-                    new DynamoDBManagerTask()
-                            .execute(DynamoDBManagerType.INSERT_USER);
+                    DynamoDBManagerTask insertUserTask=new DynamoDBManagerTask();
+                    insertUserTask.setUser(user);
+                    insertUserTask.execute(DynamoDBManagerType.INSERT_USER);
                     success=true;
                 }catch(AmazonServiceException e) {
                     success = false;
@@ -123,57 +126,5 @@ public class RegisterActivity extends AppCompatActivity {
         return u;
     }
 
-    private class DynamoDBManagerTask extends
-            AsyncTask<DynamoDBManagerType, Void, DynamoDBManagerTaskResult> {
 
-        protected DynamoDBManagerTaskResult doInBackground(
-                DynamoDBManagerType... types) {
-
-            String tableStatus = DynamoDBManager.getUserTableStatus();
-
-            DynamoDBManagerTaskResult result = new DynamoDBManagerTaskResult();
-            result.setTableStatus(tableStatus);
-            result.setTaskType(types[0]);
-            if (types[0] == DynamoDBManagerType.INSERT_USER) {
-                if (tableStatus.equalsIgnoreCase("ACTIVE")) {
-                    DynamoDBManager.insertUser(user);
-                }
-            }
-
-            return result;
-        }
-
-        protected void onPostExecute(DynamoDBManagerTaskResult result) {
-             if (result.getTableStatus().equalsIgnoreCase("ACTIVE")
-                    && result.getTaskType() == DynamoDBManagerType.INSERT_USER) {
-                Toast.makeText(RegisterActivity.this,
-                        "Users inserted successfully!", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private enum DynamoDBManagerType {
-        GET_TABLE_STATUS, CREATE_TABLE, INSERT_USER, LIST_USERS, CLEAN_UP
-    }
-
-    private class DynamoDBManagerTaskResult {
-        private DynamoDBManagerType taskType;
-        private String tableStatus;
-
-        public DynamoDBManagerType getTaskType() {
-            return taskType;
-        }
-
-        public void setTaskType(DynamoDBManagerType taskType) {
-            this.taskType = taskType;
-        }
-
-        public String getTableStatus() {
-            return tableStatus;
-        }
-
-        public void setTableStatus(String tableStatus) {
-            this.tableStatus = tableStatus;
-        }
-    }
 }
