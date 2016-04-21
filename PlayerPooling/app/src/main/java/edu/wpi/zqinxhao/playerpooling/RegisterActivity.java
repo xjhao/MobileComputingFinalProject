@@ -2,16 +2,20 @@ package edu.wpi.zqinxhao.playerpooling;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.amazonaws.AmazonServiceException;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import edu.wpi.zqinxhao.playerpooling.DB.DynamoDBManager;
 import edu.wpi.zqinxhao.playerpooling.model.EncriptionUtils;
 import edu.wpi.zqinxhao.playerpooling.model.User;
 
@@ -22,6 +26,7 @@ public class RegisterActivity extends AppCompatActivity {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    private User user;
     AmazonClientManager AmzClientManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +54,15 @@ public class RegisterActivity extends AppCompatActivity {
                 final int age = Integer.parseInt(etAge.getText().toString());
                 boolean success = false;
 
-                User user = new User(name, email, hashPassword, age);
-
-                //Do your register, if succeed, set success to true
+                user = createUser(name, email, hashPassword,age);
+                try {
+                    //DynamoDBManager.insertUser(user);
+                    new DynamoDBManagerTask()
+                            .execute(DynamoDBManagerType.INSERT_USER);
+                    success=true;
+                }catch(AmazonServiceException e) {
+                    success = false;
+                }
 
                 if(success) {
                     Intent loginIntent = new Intent(RegisterActivity.this, LoginActivity.class);
@@ -102,5 +113,67 @@ public class RegisterActivity extends AppCompatActivity {
         client.disconnect();
     }
 
+    public User createUser(String name, String email, String hashPassword, int age) {
+        User u=new User();
+        u.setName(name);
+        //this.name = name;
+        u.setEmail(email);
+        u.setHashPassword(hashPassword);
+        u.setAge(age);
+        return u;
+    }
 
+    private class DynamoDBManagerTask extends
+            AsyncTask<DynamoDBManagerType, Void, DynamoDBManagerTaskResult> {
+
+        protected DynamoDBManagerTaskResult doInBackground(
+                DynamoDBManagerType... types) {
+
+            String tableStatus = DynamoDBManager.getUserTableStatus();
+
+            DynamoDBManagerTaskResult result = new DynamoDBManagerTaskResult();
+            result.setTableStatus(tableStatus);
+            result.setTaskType(types[0]);
+            if (types[0] == DynamoDBManagerType.INSERT_USER) {
+                if (tableStatus.equalsIgnoreCase("ACTIVE")) {
+                    DynamoDBManager.insertUser(user);
+                }
+            }
+
+            return result;
+        }
+
+        protected void onPostExecute(DynamoDBManagerTaskResult result) {
+             if (result.getTableStatus().equalsIgnoreCase("ACTIVE")
+                    && result.getTaskType() == DynamoDBManagerType.INSERT_USER) {
+                Toast.makeText(RegisterActivity.this,
+                        "Users inserted successfully!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private enum DynamoDBManagerType {
+        GET_TABLE_STATUS, CREATE_TABLE, INSERT_USER, LIST_USERS, CLEAN_UP
+    }
+
+    private class DynamoDBManagerTaskResult {
+        private DynamoDBManagerType taskType;
+        private String tableStatus;
+
+        public DynamoDBManagerType getTaskType() {
+            return taskType;
+        }
+
+        public void setTaskType(DynamoDBManagerType taskType) {
+            this.taskType = taskType;
+        }
+
+        public String getTableStatus() {
+            return tableStatus;
+        }
+
+        public void setTableStatus(String tableStatus) {
+            this.tableStatus = tableStatus;
+        }
+    }
 }
