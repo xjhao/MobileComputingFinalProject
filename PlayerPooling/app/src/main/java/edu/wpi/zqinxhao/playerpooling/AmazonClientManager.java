@@ -16,6 +16,7 @@ public class AmazonClientManager {
 
     public AmazonClientManager(Context context){
         this.context=context;
+        initClients();
     }
     public void validateCredentials(){
         if(ddb==null){
