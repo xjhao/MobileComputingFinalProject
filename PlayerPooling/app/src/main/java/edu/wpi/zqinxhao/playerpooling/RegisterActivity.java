@@ -1,5 +1,6 @@
 package edu.wpi.zqinxhao.playerpooling;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -30,6 +31,8 @@ public class RegisterActivity extends AppCompatActivity {
     private GoogleApiClient client;
     private User user;
     AmazonClientManager AmzClientManager;
+    private static boolean registerSuccess = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,28 +52,53 @@ public class RegisterActivity extends AppCompatActivity {
         bRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String password = etPassword.getText().toString();
-                final String hashPassword = EncriptionUtils.computeSHAHash(password);
                 final String name = etName.getText().toString();
                 final String email = etEmail.getText().toString();
+                final String password = etPassword.getText().toString();
+                final String hashPassword = EncriptionUtils.computeSHAHash(password);
+                final String confirmPassword = etConfirmPassword.getText().toString();
                 final int age = Integer.parseInt(etAge.getText().toString());
+
                 boolean success = false;
 
                 user = createUser(name, email, hashPassword,age);
                 try {
-                    //DynamoDBManager.insertUser(user);
-                    DynamoDBManagerTask insertUserTask=new DynamoDBManagerTask();
+                    if (!isEmailValid(email)) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
+                        builder.setMessage("Invalid Email")
+                                .setNegativeButton("Retry", null)
+                                .create()
+                                .show();
+                        return;
+                    }
+
+                    if (!isPasswordValid(password)) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
+                        builder.setMessage("Password cannot less than 4 characters")
+                                .setNegativeButton("Retry", null)
+                                .create()
+                                .show();
+                        return;
+                    }
+
+                    if (!isPasswordConsistent(password, confirmPassword)) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
+                        builder.setMessage("Passwords don't match")
+                                .setNegativeButton("Retry", null)
+                                .create()
+                                .show();
+                        return;
+                    }
+
+                    DynamoDBManagerTask insertUserTask = new DynamoDBManagerTask();
                     insertUserTask.setUser(user);
+                    insertUserTask.setRegisterActivity(RegisterActivity.this);
                     insertUserTask.execute(DynamoDBManagerType.INSERT_USER);
-                    success=true;
                 }catch(AmazonServiceException e) {
                     success = false;
                 }
 
-                if(success) {
-                    Intent loginIntent = new Intent(RegisterActivity.this, LoginActivity.class);
-                    RegisterActivity.this.startActivity(loginIntent);
-                }
+
 
             }
         });
@@ -126,5 +154,27 @@ public class RegisterActivity extends AppCompatActivity {
         return u;
     }
 
+    private boolean isEmailValid(String email) {
+        return email.contains("@");
+    }
 
+    private boolean isPasswordValid(String password) {
+        return password.length() > 3;
+    }
+
+    private boolean isPasswordConsistent(String password, String confirmPassword) {
+        return password.equals(confirmPassword);
+    }
+
+    public static boolean isRegisterSuccess() {
+        return registerSuccess;
+    }
+
+    public static void setRegisterSuccess(boolean registerSuccess) {
+        RegisterActivity.registerSuccess = registerSuccess;
+    }
+
+    public static boolean getRegisterSuccess() {
+        return RegisterActivity.registerSuccess;
+    }
 }

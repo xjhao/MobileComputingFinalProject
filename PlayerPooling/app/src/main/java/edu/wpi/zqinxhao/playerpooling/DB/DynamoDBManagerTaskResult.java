@@ -4,6 +4,7 @@ public class DynamoDBManagerTaskResult {
 
     private DynamoDBManagerType taskType;
     private String tableStatus;
+    private Exception exception;
 
     public boolean isTaskSuccess() {
         return taskSuccess;
@@ -30,5 +31,14 @@ public class DynamoDBManagerTaskResult {
     public void setTableStatus(String tableStatus) {
         this.tableStatus = tableStatus;
     }
+
+    public Exception getException() {
+        return exception;
+    }
+
+    public void setException(Exception exception) {
+        this.exception = exception;
+    }
+
 
 }

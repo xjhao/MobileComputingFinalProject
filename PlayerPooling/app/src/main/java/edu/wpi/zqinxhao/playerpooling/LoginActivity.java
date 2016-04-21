@@ -63,6 +63,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
     public static AmazonClientManager getAmzClientManager(){
         return AmzClientManager;
     }

@@ -10,6 +10,7 @@ import com.amazonaws.services.dynamodbv2.model.DescribeTableResult;
 import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
 
 import edu.wpi.zqinxhao.playerpooling.LoginActivity;
+import edu.wpi.zqinxhao.playerpooling.exceptions.DuplicateEmailException;
 import edu.wpi.zqinxhao.playerpooling.model.Constants;
 import edu.wpi.zqinxhao.playerpooling.model.EncriptionUtils;
 import edu.wpi.zqinxhao.playerpooling.model.User;
@@ -17,15 +18,28 @@ import edu.wpi.zqinxhao.playerpooling.model.User;
 
 public class DynamoDBManager {
     private  static final String TAG="DynamoDbManager";
-    public static void insertUser(User userInserted) throws AmazonServiceException{
+
+    public static boolean insertUser(User userInserted) throws AmazonServiceException, DuplicateEmailException{
         try {
             AmazonDynamoDBClient ddb = LoginActivity.getAmzClientManager().getDDB();
             DynamoDBMapper mapper = new DynamoDBMapper(ddb);
+            if (isExistUser(userInserted)) {
+                throw new DuplicateEmailException();
+                //return false;
+            }
             mapper.save(userInserted);
+            return true;
         }catch(AmazonServiceException ex){
             Log.e(TAG, "Error when insert User");
-
+            return false;
         }
+    }
+
+    private static boolean isExistUser(User userInserted) {
+        AmazonDynamoDBClient ddb = LoginActivity.getAmzClientManager().getDDB();
+        DynamoDBMapper mapper = new DynamoDBMapper(ddb);
+        User user = mapper.load(User.class, userInserted.getEmail());
+        return user != null;
     }
 
     public static String getUserTableStatus() {
@@ -52,7 +66,6 @@ public class DynamoDBManager {
     public static boolean authenticateUser(String userEmail, String userPwd)throws AmazonServiceException{
 
         try {
-            //String passwordEncrption= EncriptionUtils.computeSHAHash(password);
             AmazonDynamoDBClient ddb = LoginActivity.getAmzClientManager().getDDB();
             DynamoDBMapper mapper = new DynamoDBMapper(ddb);
             User user=mapper.load(User.class, userEmail);
