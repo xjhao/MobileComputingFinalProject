@@ -11,6 +11,13 @@ public class User {
     private String hashPassword;
     private int age;
 
+    public User(String name, String email, String hashPassword, int age) {
+        this.name = name;
+        this.email = email;
+        this.hashPassword = hashPassword;
+        this.age = age;
+    }
+
     public void setName(String name) {
         this.name = name;
     }

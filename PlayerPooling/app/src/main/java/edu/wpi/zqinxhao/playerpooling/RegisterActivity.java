@@ -1,5 +1,6 @@
 package edu.wpi.zqinxhao.playerpooling;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,7 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import edu.wpi.zqinxhao.playerpooling.model.EncriptionUtils;
+import edu.wpi.zqinxhao.playerpooling.model.User;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -42,12 +44,20 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final String password = etPassword.getText().toString();
                 final String hashPassword = EncriptionUtils.computeSHAHash(password);
+                final String name = etName.getText().toString();
+                final String email = etEmail.getText().toString();
+                final int age = Integer.parseInt(etAge.getText().toString());
+                boolean success = false;
 
-//                AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
-//                builder.setMessage(hashPassword)
-//                        .setNegativeButton("test hash password", null)
-//                        .create()
-//                        .show();
+                User user = new User(name, email, hashPassword, age);
+
+                //Do your register, if succeed, set success to true
+
+                if(success) {
+                    Intent loginIntent = new Intent(RegisterActivity.this, LoginActivity.class);
+                    RegisterActivity.this.startActivity(loginIntent);
+                }
+
             }
         });
     }

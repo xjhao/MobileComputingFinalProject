@@ -39,6 +39,7 @@ public class DynamoDBManager {
             }
         }catch(AmazonServiceException ex){
             Log.e(TAG, "Error when authenticate User");
+            return false;
 
         }
     }
