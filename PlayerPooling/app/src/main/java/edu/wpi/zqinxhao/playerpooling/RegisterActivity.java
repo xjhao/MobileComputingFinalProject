@@ -1,16 +1,8 @@
 package edu.wpi.zqinxhao.playerpooling;
 
-import android.app.AlertDialog;
-import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,10 +10,6 @@ import android.widget.EditText;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 
 import edu.wpi.zqinxhao.playerpooling.model.EncriptionUtils;
 
@@ -32,12 +20,12 @@ public class RegisterActivity extends AppCompatActivity {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
-
+    AmazonClientManager AmzClientManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
+        AmzClientManager=LoginActivity.AmzClientManager;
         final EditText etName = (EditText) findViewById(R.id.etName);
         final EditText etEmail = (EditText) findViewById(R.id.etEmail);
         final EditText etPassword = (EditText) findViewById(R.id.etPassword);
@@ -54,13 +42,12 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final String password = etPassword.getText().toString();
                 final String hashPassword = EncriptionUtils.computeSHAHash(password);
-                boolean success = true;
 
-                if (success) {
-                    Intent loginIntent = new Intent(RegisterActivity.this, LoginActivity.class);
-                    RegisterActivity.this.startActivity(loginIntent);
-                }
-
+//                AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
+//                builder.setMessage(hashPassword)
+//                        .setNegativeButton("test hash password", null)
+//                        .create()
+//                        .show();
             }
         });
     }

@@ -25,14 +25,14 @@ public class DynamoDBManager {
 
         }
     }
-    public boolean authenticateUser(String username, String password){
+    public boolean authenticateUser(String username, String password)throws AmazonServiceException{
 
         try {
             String passwordEncrption= EncriptionUtils.computeSHAHash(password);
             AmazonDynamoDB ddb = LoginActivity.getAmzClientManager().getDDB();
             DynamoDBMapper mapper = new DynamoDBMapper(ddb);
             User user=mapper.load(User.class, username);
-            if(user.getPassword().equals(passwordEncrption)){
+            if(user.getHashPassword().equals(passwordEncrption)){
                 return true;
             }else{
                 return false;
