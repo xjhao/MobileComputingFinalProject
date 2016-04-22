@@ -12,7 +12,6 @@ import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
 import edu.wpi.zqinxhao.playerpooling.LoginActivity;
 import edu.wpi.zqinxhao.playerpooling.exceptions.DuplicateEmailException;
 import edu.wpi.zqinxhao.playerpooling.model.Constants;
-import edu.wpi.zqinxhao.playerpooling.model.EncriptionUtils;
 import edu.wpi.zqinxhao.playerpooling.model.User;
 
 
