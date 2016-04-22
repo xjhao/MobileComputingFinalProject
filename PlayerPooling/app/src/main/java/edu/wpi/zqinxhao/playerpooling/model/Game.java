@@ -17,6 +17,8 @@ public class Game {
 
     private String creatTime;
 
+    private String hostNumber;
+
     private String gameName;
 
     private int playerNum;
@@ -92,5 +94,14 @@ public class Game {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @DynamoDBAttribute(attributeName = "hostNumber")
+    public String getHostNumber() {
+        return hostNumber;
+    }
+
+    public void setHostNumber(String hostNumber) {
+        this.hostNumber = hostNumber;
     }
 }
