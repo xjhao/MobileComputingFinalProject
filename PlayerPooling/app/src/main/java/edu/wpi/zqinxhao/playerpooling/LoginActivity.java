@@ -19,7 +19,11 @@ import edu.wpi.zqinxhao.playerpooling.model.User;
 
 public class LoginActivity extends AppCompatActivity {
     private static AmazonClientManager AmzClientManager=null;
-    private static boolean loginSuccess=false;
+    private static boolean loginSuccess = false;
+
+
+
+    private static User loginUser = null;
     private static String userEmail;
     private static String userPwd;
 
@@ -81,5 +85,12 @@ public class LoginActivity extends AppCompatActivity {
     }
     public static String getUserPwd() {
         return userPwd;
+    }
+    public static User getLoginUser() {
+        return loginUser;
+    }
+
+    public static void setLoginUser(User loginUser) {
+        LoginActivity.loginUser = loginUser;
     }
 }

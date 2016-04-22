@@ -68,8 +68,14 @@ public class DynamoDBManager {
         try {
             AmazonDynamoDBClient ddb = LoginActivity.getAmzClientManager().getDDB();
             DynamoDBMapper mapper = new DynamoDBMapper(ddb);
-            User user=mapper.load(User.class, userEmail);
+            User user = mapper.load(User.class, userEmail);
+
+            if (user == null) {
+                return false;
+            }
+
             if(user.getHashPassword().equals(userPwd)){
+                LoginActivity.setLoginUser(user);
                 return true;
             }else{
                 return false;

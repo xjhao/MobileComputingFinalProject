@@ -59,10 +59,13 @@ public class DynamoDBManagerTask extends
     protected void onPostExecute(DynamoDBManagerTaskResult result) {
         if (result.getTableStatus().equalsIgnoreCase("ACTIVE")
                 && result.getTaskType() == DynamoDBManagerType.INSERT_USER) {
+
             register_activity.setRegisterSuccess(result.isTaskSuccess());
+
             if(register_activity.getRegisterSuccess()) {
                 Intent loginIntent = new Intent(register_activity, LoginActivity.class);
                 register_activity.startActivity(loginIntent);
+
             } else {
                 if (result.getException() instanceof DuplicateEmailException) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(register_activity);
@@ -72,13 +75,18 @@ public class DynamoDBManagerTask extends
                             .show();
                 }
             }
+
         }else if(result.getTableStatus().equalsIgnoreCase("ACTIVE")
                 && result.getTaskType() == DynamoDBManagerType.AUTHENTICATE_USER){
 
             login_activity.setLoginSuccess(result.isTaskSuccess());
+
             if(login_activity.getLoginSuccess()) {
+
                 Intent userAreaIntent = new Intent(login_activity, UserAreaActivity.class);
                 login_activity.startActivity(userAreaIntent);
+
+
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(login_activity);
                 builder.setMessage("Login Failed")
