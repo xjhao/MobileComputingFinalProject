@@ -12,7 +12,7 @@ import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
 import edu.wpi.zqinxhao.playerpooling.LoginActivity;
 import edu.wpi.zqinxhao.playerpooling.exceptions.DuplicateEmailException;
 import edu.wpi.zqinxhao.playerpooling.model.Constants;
-import edu.wpi.zqinxhao.playerpooling.model.EncriptionUtils;
+import edu.wpi.zqinxhao.playerpooling.model.Game;
 import edu.wpi.zqinxhao.playerpooling.model.User;
 
 
@@ -86,6 +86,37 @@ public class DynamoDBManager {
 
         }
     }
+    public static boolean insertGame(Game game){
+        try {
+            AmazonDynamoDBClient ddb = LoginActivity.getAmzClientManager().getDDB();
+            DynamoDBMapper mapper = new DynamoDBMapper(ddb);
+            mapper.save(game);
+            return true;
+        }catch(AmazonServiceException ex){
+            Log.e(TAG, "Error when insert Game");
+            return false;
+        }
 
+    }
 
+    public static String getGameTableStatus() {
+
+        try {
+            AmazonDynamoDBClient ddb = LoginActivity.getAmzClientManager()
+                    .getDDB();
+
+            DescribeTableRequest request = new DescribeTableRequest()
+                    .withTableName(Constants.GAME_TABLE_NAME);
+            DescribeTableResult result = ddb.describeTable(request);
+
+            String status = result.getTable().getTableStatus();
+            return status == null ? "" : status;
+
+        } catch (ResourceNotFoundException e) {
+        } catch (AmazonServiceException ex) {
+            Log.e(TAG,"");
+        }
+
+        return "";
+    }
 }

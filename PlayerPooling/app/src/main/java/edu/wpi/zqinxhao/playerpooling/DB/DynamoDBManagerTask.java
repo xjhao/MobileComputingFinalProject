@@ -1,16 +1,16 @@
 package edu.wpi.zqinxhao.playerpooling.DB;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.view.View;
-import android.widget.Toast;
+import android.util.Log;
 
+import edu.wpi.zqinxhao.playerpooling.CreateGameActivity;
 import edu.wpi.zqinxhao.playerpooling.LoginActivity;
 import edu.wpi.zqinxhao.playerpooling.RegisterActivity;
 import edu.wpi.zqinxhao.playerpooling.UserAreaActivity;
 import edu.wpi.zqinxhao.playerpooling.exceptions.DuplicateEmailException;
+import edu.wpi.zqinxhao.playerpooling.model.Game;
 import edu.wpi.zqinxhao.playerpooling.model.User;
 
 /**
@@ -19,19 +19,21 @@ import edu.wpi.zqinxhao.playerpooling.model.User;
 public class DynamoDBManagerTask extends
         AsyncTask<DynamoDBManagerType, Void, DynamoDBManagerTaskResult> {
     private User user = null;
+    private Game game=null;
     LoginActivity login_activity;
     RegisterActivity register_activity;
 
     protected DynamoDBManagerTaskResult doInBackground(
             DynamoDBManagerType... types) {
 
-        String tableStatus = DynamoDBManager.getUserTableStatus();
 
         DynamoDBManagerTaskResult result = new DynamoDBManagerTaskResult();
-        result.setTableStatus(tableStatus);
-        result.setTaskType(types[0]);
-
         if (types[0] == DynamoDBManagerType.INSERT_USER) {
+            String tableStatus = DynamoDBManager.getUserTableStatus();
+
+
+            result.setTableStatus(tableStatus);
+            result.setTaskType(types[0]);
             if (tableStatus.equalsIgnoreCase("ACTIVE")) {
                 boolean insertResult = false;
                 try {
@@ -46,9 +48,25 @@ public class DynamoDBManagerTask extends
                 }
             }
         } else if (types[0] == DynamoDBManagerType.AUTHENTICATE_USER) {
+            String tableStatus = DynamoDBManager.getUserTableStatus();
+
+
+            result.setTableStatus(tableStatus);
+            result.setTaskType(types[0]);
             if (tableStatus.equalsIgnoreCase("ACTIVE")) {
                 boolean authenResult = DynamoDBManager.authenticateUser(LoginActivity.getUserEmail(),LoginActivity.getUserPwd());
                 if(!authenResult) {
+                    result.setTaskSuccess(false);
+                }
+            }
+        } else if(types[0] == DynamoDBManagerType.INSEERT_GAME){
+            String tableStatus = DynamoDBManager.getGameTableStatus();
+
+            result.setTableStatus(tableStatus);
+            result.setTaskType(types[0]);
+            if(tableStatus.equalsIgnoreCase("ACTIVE")){
+                boolean insertResult=DynamoDBManager.insertGame(CreateGameActivity.getGame());
+                if(!insertResult){
                     result.setTaskSuccess(false);
                 }
             }
@@ -95,6 +113,9 @@ public class DynamoDBManagerTask extends
                         .show();
             }
 
+        }else if(result.getTableStatus().equalsIgnoreCase("ACTIVE")
+                && result.getTaskType() == DynamoDBManagerType.INSEERT_GAME){
+            Log.d("TEST INSERT GAME", "Insert");
         }
 
 
@@ -110,6 +131,9 @@ public class DynamoDBManagerTask extends
 
     public void setRegisterActivity(RegisterActivity registerActivity) {
         this.register_activity = registerActivity;
+    }
+    public void setGame(Game game){
+        this.game=game;
     }
 }
 
