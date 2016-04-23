@@ -1,7 +1,6 @@
 package edu.wpi.zqinxhao.playerpooling;
 
 import android.os.Bundle;
-import android.widget.EditText;
 import android.support.v7.app.AppCompatActivity;
 
 import edu.wpi.zqinxhao.playerpooling.model.Game;
