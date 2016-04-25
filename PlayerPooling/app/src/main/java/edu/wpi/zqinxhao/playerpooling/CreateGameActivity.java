@@ -1,17 +1,28 @@
 package edu.wpi.zqinxhao.playerpooling;
 
+import android.content.Intent;
 import android.os.Bundle;
-
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageButton;
 
+import com.amazonaws.AmazonServiceException;
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import edu.wpi.zqinxhao.playerpooling.DB.DynamoDBManagerTask;
+import edu.wpi.zqinxhao.playerpooling.DB.DynamoDBManagerType;
+import edu.wpi.zqinxhao.playerpooling.model.Constants;
 import edu.wpi.zqinxhao.playerpooling.model.Game;
 
 public class CreateGameActivity extends AppCompatActivity {
     private static Game gameCreated;
+    Map<String,String> latlng=new HashMap<String,String>();
     public static Game getGame() {
         return gameCreated;
     }
@@ -20,56 +31,69 @@ public class CreateGameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_game);
-        final EditText etGameName = (EditText) findViewById(R.id.etGameName);
-        final EditText etPlayerNum = (EditText) findViewById(R.id.etPlayerNum);
-        final EditText etMaxDistance = (EditText) findViewById(R.id.etMaxDistance);
-        final EditText etLocation = (EditText) findViewById(R.id.etLocation);
-        final EditText etPhone = (EditText) findViewById(R.id.etPhone);
-        final EditText etDescription = (EditText) findViewById(R.id.etDescription);
-        final ImageButton ibGoogleMap = (ImageButton) findViewById(R.id.ibGoogleMap);
         final Button bCreateGame = (Button) findViewById(R.id.bCreateGame);
-
+        final ImageButton ibGoogleMap = (ImageButton) findViewById(R.id.ibGoogleMap);
+        gameCreated=new Game();
         ibGoogleMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent searchLocationOnMapIntent = new Intent(CreateGameActivity.this, GooglePlacesActivity.class);
+                final String etLocation = ((EditText) findViewById(R.id.etLocation)).getText().toString();
+                searchLocationOnMapIntent.putExtra("location", etLocation.toString());
 
+                startActivityForResult(searchLocationOnMapIntent, 1);
             }
         });
 
         bCreateGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+
+                final String etGameName = ((EditText) findViewById(R.id.etGameName)).getText().toString();
+                int  etPlayerNum = Integer.parseInt(((EditText) findViewById(R.id.etPlayerNum)).getText().toString());
+                final String etMaxDistance = ((EditText) findViewById(R.id.etMaxDistance)).getText().toString();
+
+                final String etPhone = ((EditText) findViewById(R.id.etPhone)).getText().toString();
+                final String etDescription = ((EditText) findViewById(R.id.etDescription)).getText().toString();
+
+                setGameCreated(etGameName,etPlayerNum,etMaxDistance,etPhone,etDescription);
+                try {
+
+                DynamoDBManagerTask insertGameTask=new DynamoDBManagerTask();
+                insertGameTask.setGame(gameCreated);
+                insertGameTask.execute(DynamoDBManagerType.INSEERT_GAME);
+
+                }catch(AmazonServiceException e) {
+
+                }
             }
         });
 
-        //for test only
-//        Game testGame=new Game();
-//        testGame.setHost("zqin@wpi.edu");
-//        testGame.setCreatTime(new Date().toString());
-//        testGame.setDescription("This is a test Game");
-//        testGame.setGameName("blackjack");
-//        Map<String, String> loc=new HashMap<String, String>();
-//        loc.put("latitude","30.3333");
-//        loc.put("longitude","20.000");
-//        testGame.setLocation(loc);
-//        testGame.setMaxDistance(5000);
-//        testGame.setPlayerNum(5);
-//        testGame.setStatus("Active");
-//        testGame.setHostNumber("5086671535");
-//        gameCreated=testGame;
-//        try {
-//            //DynamoDBManager.insertUser(user);
-//            DynamoDBManagerTask insertGameTask=new DynamoDBManagerTask();
-//            //insertGameTask.setActivity(CreateGameActivity.this);
-//            //insertUserTask.setUser(user);
-//            insertGameTask.setGame(gameCreated);
-//            insertGameTask.execute(DynamoDBManagerType.INSEERT_GAME);
-//
-//        }catch(AmazonServiceException e) {
-//            //success = false;
-//        }
-//
 
+    }
+    private void setGameCreated(String etGameName, int etPlayerNum, String etMaxDistance, String etPhone, String etDescription){
+
+        gameCreated.setGameName(etGameName);
+        gameCreated.setCreatTime(String.valueOf(new Date().getTime()));
+        gameCreated.setPlayerNum(etPlayerNum);
+        gameCreated.setMaxDistance(etMaxDistance);
+        gameCreated.setHostNumber(etPhone);
+        gameCreated.setDescription(etDescription);
+        gameCreated.setHost(LoginActivity.getUserEmail());
+        gameCreated.setStatus(Constants.ACTIVE_STATE);
+    }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(requestCode == 1){
+            //System.out.println(data.getStringExtra("locationNAmeReturned"));
+            LatLng ltlg=data.getParcelableExtra("locationReturned");
+            latlng.put(Constants.LATITUDE,String.valueOf(ltlg.latitude));
+            latlng.put(Constants.LONGTITUDE, String.valueOf(ltlg.longitude));
+
+            gameCreated.setLocation(latlng);
+
+            String locationName= data.getStringExtra("locationName");
+            EditText etLocationName= (EditText) findViewById(R.id.etLocation);
+            etLocationName.setText(locationName);
+        }
     }
 }

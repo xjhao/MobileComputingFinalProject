@@ -9,4 +9,11 @@ public class Constants {
     public static final String USER_TABLE_NAME="User";
 
     public static final String GAME_TABLE_NAME ="Game" ;
+    public static final String ACTIVE_STATE ="GAME_ACTIVE" ;
+    public static final String INACTIVE_STATE ="GAME_INACTIVE" ;
+    public static final String CLOSE_STATE ="GAME_CLOSE" ;
+
+    public static final String LONGTITUDE="longitude";//jing du
+    public static final String LATITUDE="latitude";// wei du
+    public static final String GOOGLE_API_KEY = "AIzaSyDdvysQRBY90cIkqtVsz4qN3uJnsExdnpE";
 }

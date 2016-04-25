@@ -7,11 +7,11 @@
     tools:context="edu.wpi.zqinxhao.playerpooling.GooglePlacesActivity">
 
     <fragment
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/googleMap"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_above="@+id/latlongLocation" />
+        android:name="com.google.android.gms.maps.SupportMapFragment" />
 
     <TextView
         android:id="@+id/latlongLocation"

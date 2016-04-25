@@ -23,7 +23,7 @@ public class Game {
 
     private int playerNum;
 
-    private int maxDistance;
+    private String maxDistance;
 
     private Map<String, String> location;
 
@@ -64,11 +64,11 @@ public class Game {
         this.playerNum = playerNum;
     }
     @DynamoDBAttribute(attributeName = "maxDistance")
-    public int getMaxDistance() {
+    public String getMaxDistance() {
         return maxDistance;
     }
 
-    public void setMaxDistance(int maxDistance) {
+    public void setMaxDistance(String maxDistance) {
         this.maxDistance = maxDistance;
     }
     @DynamoDBAttribute(attributeName = "location")

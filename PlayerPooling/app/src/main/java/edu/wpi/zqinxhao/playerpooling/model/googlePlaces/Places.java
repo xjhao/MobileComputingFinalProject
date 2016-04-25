@@ -1,4 +1,4 @@
-package edu.wpi.zqinxhao.playerpooling.model;
+package edu.wpi.zqinxhao.playerpooling.model.googlePlaces;
 
 import org.json.JSONArray;
 import org.json.JSONException;
