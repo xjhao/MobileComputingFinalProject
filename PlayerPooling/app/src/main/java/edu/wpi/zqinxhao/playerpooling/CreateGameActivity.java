@@ -22,10 +22,8 @@ import edu.wpi.zqinxhao.playerpooling.model.Game;
 
 public class CreateGameActivity extends AppCompatActivity {
     private static Game gameCreated;
+    private static boolean createGameSuccess = false;
     Map<String,String> latlng=new HashMap<String,String>();
-    public static Game getGame() {
-        return gameCreated;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +59,7 @@ public class CreateGameActivity extends AppCompatActivity {
 
                 DynamoDBManagerTask insertGameTask=new DynamoDBManagerTask();
                 insertGameTask.setGame(gameCreated);
+                    insertGameTask.setCreate_game_activity(CreateGameActivity.this);
                 insertGameTask.execute(DynamoDBManagerType.INSEERT_GAME);
 
                 }catch(AmazonServiceException e) {
@@ -95,5 +94,17 @@ public class CreateGameActivity extends AppCompatActivity {
             EditText etLocationName= (EditText) findViewById(R.id.etLocation);
             etLocationName.setText(locationName);
         }
+    }
+
+    public static boolean isCreateGameSuccess() {
+        return createGameSuccess;
+    }
+
+    public static void setCreateGameSuccess(boolean createGameSuccess) {
+        CreateGameActivity.createGameSuccess = createGameSuccess;
+    }
+
+    public static Game getGame() {
+        return gameCreated;
     }
 }

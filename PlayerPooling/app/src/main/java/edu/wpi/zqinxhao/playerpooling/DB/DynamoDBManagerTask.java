@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import edu.wpi.zqinxhao.playerpooling.CreateGameActivity;
+import edu.wpi.zqinxhao.playerpooling.HostGameActivity;
 import edu.wpi.zqinxhao.playerpooling.LoginActivity;
 import edu.wpi.zqinxhao.playerpooling.RegisterActivity;
 import edu.wpi.zqinxhao.playerpooling.UserAreaActivity;
@@ -22,6 +23,12 @@ public class DynamoDBManagerTask extends
     private Game game=null;
     LoginActivity login_activity;
     RegisterActivity register_activity;
+
+    public void setCreate_game_activity(CreateGameActivity create_game_activity) {
+        this.create_game_activity = create_game_activity;
+    }
+
+    CreateGameActivity create_game_activity;
 
     protected DynamoDBManagerTaskResult doInBackground(
             DynamoDBManagerType... types) {
@@ -116,6 +123,21 @@ public class DynamoDBManagerTask extends
         }else if(result.getTableStatus().equalsIgnoreCase("ACTIVE")
                 && result.getTaskType() == DynamoDBManagerType.INSEERT_GAME){
             Log.d("TEST INSERT GAME", "Insert");
+
+            create_game_activity.setCreateGameSuccess(result.isTaskSuccess());
+
+            if (create_game_activity.isCreateGameSuccess()) {
+                Intent hostGameIntent = new Intent(create_game_activity, HostGameActivity.class);
+                create_game_activity.startActivity(hostGameIntent);
+
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(create_game_activity);
+                builder.setMessage("Create Game Failed")
+                        .setNegativeButton("Retry", null)
+                        .create()
+                        .show();
+            }
+
         }
 
 
