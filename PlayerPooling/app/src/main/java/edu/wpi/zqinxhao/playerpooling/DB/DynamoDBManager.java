@@ -4,14 +4,23 @@ import android.util.Log;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.DescribeTableRequest;
 import com.amazonaws.services.dynamodbv2.model.DescribeTableResult;
 import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import edu.wpi.zqinxhao.playerpooling.LoginActivity;
 import edu.wpi.zqinxhao.playerpooling.exceptions.DuplicateEmailException;
 import edu.wpi.zqinxhao.playerpooling.model.Constants;
+import edu.wpi.zqinxhao.playerpooling.model.DistanceUtils;
 import edu.wpi.zqinxhao.playerpooling.model.Game;
 import edu.wpi.zqinxhao.playerpooling.model.User;
 
@@ -98,7 +107,36 @@ public class DynamoDBManager {
         }
 
     }
+    public static ArrayList<Game> searchGames(LatLng location){
+        try {
+            AmazonDynamoDBClient ddb = LoginActivity.getAmzClientManager().getDDB();
+            DynamoDBMapper mapper = new DynamoDBMapper(ddb);
+            Map<String, AttributeValue> expressionForOnlyActiveGames = new HashMap<String, AttributeValue>();
+            expressionForOnlyActiveGames.put(":val", new AttributeValue().withS(Constants.ACTIVE_STATE));
+            DynamoDBScanExpression expression = new DynamoDBScanExpression().withFilterExpression("game_status = :val").withExpressionAttributeValues(expressionForOnlyActiveGames);
+            List<Game> scanResult= mapper.scan(Game.class, expression);
 
+            for(Game g: scanResult){
+                double distanceMax=Double.parseDouble(g.getMaxDistance());
+                Map<String,String> gameLoc = g.getLocation();
+                Map<String, String> requesterLoc= new HashMap<String, String>() ;
+                requesterLoc.put(Constants.LATITUDE, String.valueOf(location.latitude));
+                requesterLoc.put(Constants.LONGTITUDE, String.valueOf(location.longitude));
+                if(DistanceUtils.getDistance(requesterLoc,gameLoc)>distanceMax){
+                    scanResult.remove(g);
+                }
+            }
+            ArrayList<Game> result=  new ArrayList<Game>();
+            result.addAll(scanResult);
+            return scanResult==null?new ArrayList<Game>(): result;
+
+        }catch(AmazonServiceException ex){
+            Log.e(TAG, "Error when authenticate User");
+            return new ArrayList<Game>();
+
+        }
+        //return new ArrayList<Game>();
+    }
     public static String getGameTableStatus() {
 
         try {

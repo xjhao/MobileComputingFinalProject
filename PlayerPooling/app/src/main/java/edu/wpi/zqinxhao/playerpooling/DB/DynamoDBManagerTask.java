@@ -5,6 +5,12 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.amazonaws.AmazonServiceException;
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
+
+import edu.wpi.zqinxhao.playerpooling.BrowseGamesActivity;
 import edu.wpi.zqinxhao.playerpooling.CreateGameActivity;
 import edu.wpi.zqinxhao.playerpooling.HostGameActivity;
 import edu.wpi.zqinxhao.playerpooling.LoginActivity;
@@ -21,6 +27,11 @@ public class DynamoDBManagerTask extends
         AsyncTask<DynamoDBManagerType, Void, DynamoDBManagerTaskResult> {
     private User user = null;
     private Game game=null;
+
+
+    private ArrayList<Game> gamesSearch = new ArrayList<Game>();
+
+    private LatLng location =null;
     LoginActivity login_activity;
     RegisterActivity register_activity;
 
@@ -29,6 +40,9 @@ public class DynamoDBManagerTask extends
     }
 
     CreateGameActivity create_game_activity;
+
+
+    UserAreaActivity userAreaActivity;
 
     protected DynamoDBManagerTaskResult doInBackground(
             DynamoDBManagerType... types) {
@@ -76,6 +90,14 @@ public class DynamoDBManagerTask extends
                 if(!insertResult){
                     result.setTaskSuccess(false);
                 }
+            }
+        } else if(types[0] == DynamoDBManagerType.QUERY_GAME){
+            String tableStatus = DynamoDBManager.getGameTableStatus();
+            result.setTableStatus(tableStatus);
+            result.setTaskType(types[0]);
+            if(tableStatus.equalsIgnoreCase("ACTIVE")){
+                this.gamesSearch = DynamoDBManager.searchGames(location);
+
             }
         }
         return result;
@@ -138,6 +160,18 @@ public class DynamoDBManagerTask extends
                         .show();
             }
 
+
+        }else if(result.getTableStatus().equalsIgnoreCase("ACTIVE")
+                && result.getTaskType() == DynamoDBManagerType.QUERY_GAME){
+            try {
+                Intent browseActivity = new Intent(userAreaActivity,BrowseGamesActivity.class);
+                browseActivity.putParcelableArrayListExtra("gameList", getGamesSearch());
+                userAreaActivity.startActivity(browseActivity);
+
+            }catch(AmazonServiceException e) {
+                //TO DO
+            }
+
         }
 
 
@@ -157,5 +191,21 @@ public class DynamoDBManagerTask extends
     public void setGame(Game game){
         this.game=game;
     }
+
+    public void setLocation(LatLng location) {
+        this.location = location;
+    }
+    public UserAreaActivity getUserAreaActivity() {
+        return userAreaActivity;
+    }
+
+    public void setUserAreaActivity(UserAreaActivity userAreaActivity) {
+        this.userAreaActivity = userAreaActivity;
+    }
+
+    public ArrayList<Game> getGamesSearch() {
+        return gamesSearch;
+    }
+
 }
 

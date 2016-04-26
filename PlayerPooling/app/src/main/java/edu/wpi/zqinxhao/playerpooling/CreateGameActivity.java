@@ -79,7 +79,7 @@ public class CreateGameActivity extends AppCompatActivity {
         gameCreated.setHostNumber(etPhone);
         gameCreated.setDescription(etDescription);
         gameCreated.setHost(LoginActivity.getUserEmail());
-        gameCreated.setStatus(Constants.ACTIVE_STATE);
+        gameCreated.setGameStatus(Constants.ACTIVE_STATE);
     }
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if(requestCode == 1){

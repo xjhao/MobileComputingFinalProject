@@ -12,6 +12,7 @@ public class DistanceUtils {
         double dstLa = Double.parseDouble(dst.get("latitude"));
         double dstLo = Double.parseDouble(dst.get("longitude"));
 
-        return Math.sqrt(Math.pow((srcLa - dstLa), 2) + Math.pow((srcLo - dstLo), 2));
+        double resLatLng = Math.sqrt(Math.pow((srcLa - dstLa), 2) + Math.pow((srcLo - dstLo), 2));
+        return resLatLng * 1609.344;
     }
 }

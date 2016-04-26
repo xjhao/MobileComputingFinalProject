@@ -42,17 +42,17 @@
             </intent-filter>
         </activity>
         <activity android:name=".UserAreaActivity" />
-        <!--
-             ATTENTION: This was auto-generated to add Google Play services to your project for
-             App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
-        -->
-
         <activity android:name=".CreateGameActivity" />
         <activity android:name=".GooglePlacesActivity" />
 
         <uses-feature
             android:glEsVersion="0x00020000"
             android:required="true" />
+
+        <activity android:name=".BrowseGamesActivity"></activity>
+        <uses-feature android:glEsVersion="0x00020000"
+            android:required="true"/>
+
 
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
