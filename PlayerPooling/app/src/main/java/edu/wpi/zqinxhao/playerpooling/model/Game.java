@@ -1,17 +1,21 @@
 package edu.wpi.zqinxhao.playerpooling.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBAttribute;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBRangeKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by xhao on 4/22/16.
  */
 @DynamoDBTable(tableName="Game")
-public class Game {
+public class Game implements Parcelable{
 
     private String host;
 
@@ -29,7 +33,7 @@ public class Game {
 
     private String description;
 
-    private String status;
+    private String game_status;
 
     @DynamoDBHashKey(attributeName="host")
     public String getHost() {
@@ -87,13 +91,13 @@ public class Game {
     public void setDescription(String description) {
         this.description = description;
     }
-    @DynamoDBAttribute(attributeName = "status")
-    public String getStatus() {
-        return status;
+    @DynamoDBAttribute(attributeName = "game_status")
+    public String getGameStatus() {
+        return game_status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setGameStatus(String status) {
+        this.game_status = status;
     }
 
     @DynamoDBAttribute(attributeName = "hostNumber")
@@ -104,4 +108,52 @@ public class Game {
     public void setHostNumber(String hostNumber) {
         this.hostNumber = hostNumber;
     }
+
+    @Override
+    public int describeContents() {
+        return this.hashCode();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(host);
+        dest.writeString(creatTime);
+        dest.writeString(hostNumber);
+        dest.writeString(gameName);
+        dest.writeInt(playerNum);
+        dest.writeString(maxDistance);
+        dest.writeInt(location.size());
+        for (String s: location.keySet()) {
+            dest.writeString(s);
+            dest.writeString(location.get(s));
+        }
+        dest.writeString(description);
+        dest.writeString(game_status);
+    }
+    public static final Parcelable.Creator CREATOR
+            = new Parcelable.Creator() {
+        public Game createFromParcel(Parcel in) {
+            return new Game(in);
+        }
+
+        public Game[] newArray(int size) {
+            return new Game[size];
+        }
+    };
+    public Game(Parcel in){
+        host= in.readString();
+        creatTime= in.readString();
+        hostNumber=in.readString();
+        gameName= in.readString();
+        playerNum=in.readInt();
+        maxDistance=in.readString();
+        location=new HashMap<String,String>();
+        int count = in.readInt();
+        for (int i = 0; i < count; i++) {
+            location.put(in.readString(), in.readString());
+        }
+        description = in.readString();
+        game_status=in.readString();
+    }
+    public Game(){};
 }

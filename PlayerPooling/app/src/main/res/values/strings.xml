@@ -15,7 +15,7 @@
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_register1">RegisterActivity1</string>
     <string name="title_activity_login">LoginActivity</string>
-    <string name="google_app_id">558448487527</string>
+    <!--<string name="google_app_id">558448487527</string>-->
     <string name="google_geo_key">AIzaSyCvXMT4PFkHObL9nxUsOSyXAH51EGqj7nU</string>
     <string name="google_maps_key">AIzaSyCvXMT4PFkHObL9nxUsOSyXAH51EGqj7nU</string>
 </resources>
