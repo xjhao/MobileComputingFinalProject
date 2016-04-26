@@ -10,15 +10,19 @@ public class User {
     private String email;
     private String hashPassword;
     private int age;
+    private String gcmToken;
 
 
-    public void setName(String name) {
-        this.name = name;
-    }
     @DynamoDBAttribute(attributeName = "name")
     public String getName() {
         return name;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
     @DynamoDBHashKey(attributeName = "email")
     public String getEmail() {
         return email;
@@ -27,6 +31,8 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+
+
     @DynamoDBAttribute(attributeName = "password")
     public String getHashPassword() {
         return hashPassword;
@@ -35,6 +41,8 @@ public class User {
     public void setHashPassword(String hashPassword) {
         this.hashPassword = hashPassword;
     }
+
+
     @DynamoDBAttribute(attributeName = "age")
     public int getAge() {
         return age;
@@ -42,5 +50,14 @@ public class User {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    @DynamoDBAttribute(attributeName = "gcmToken")
+    public String getGcmToken() {
+        return gcmToken;
+    }
+
+    public void setGcmToken(String gcmToken) {
+        this.gcmToken = gcmToken;
     }
 }
