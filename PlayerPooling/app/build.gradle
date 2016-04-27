@@ -23,21 +23,21 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.google.android.gms:play-services:8.4.0'
 //    compile 'com.google.android.gms:play-services-auth:8.4.0'
     compile 'com.android.support:support-v4:23.0.0'
-
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.volley:volley:1.0.0'
     compile 'com.amazonaws:aws-android-sdk-ddb:2.2.+'
     compile 'com.amazonaws:aws-android-sdk-core:2.+'
     compile 'com.amazonaws:aws-android-sdk-cognito:2.+'
     compile 'com.amazonaws:aws-android-sdk-ddb-mapper:2.2.+'
+    compile 'com.amazonaws:aws-android-sdk-sns:2.+'
     compile 'com.android.support:appcompat-v7:23.1.1'
-
-
+    compile files('libs/jackson-all-1.7.3.jar')
+    compile files('libs/opencsv-3.7.jar')
 }
 
 apply plugin: 'com.google.gms.google-services'

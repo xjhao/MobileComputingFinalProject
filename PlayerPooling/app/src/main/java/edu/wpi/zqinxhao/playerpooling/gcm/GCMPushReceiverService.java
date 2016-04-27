@@ -12,6 +12,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.android.gms.gcm.GcmListenerService;
 
+import edu.wpi.zqinxhao.playerpooling.HostGameActivity;
 import edu.wpi.zqinxhao.playerpooling.LoginActivity;
 import edu.wpi.zqinxhao.playerpooling.R;
 import edu.wpi.zqinxhao.playerpooling.LoginActivity;
@@ -28,31 +29,31 @@ public class GCMPushReceiverService extends GcmListenerService {
     }
 
     private void sendNotification(String message) {
-        Intent intent = new Intent(this, LoginActivity.class);
+        Intent intent = new Intent(this, HostGameActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         int requestCode = 0; //Your request code
         PendingIntent pendingIntent = PendingIntent.getActivity(this, requestCode, intent, PendingIntent.FLAG_ONE_SHOT);
 
         //Setup notificaiton
-//        if (LoginActivity.isInFront) {
-//            Intent intent1 = new Intent("suibian");
-//            intent1.setAction("Dialog");
-//            intent1.putExtra("message", message);
-//            LocalBroadcastManager.getInstance(this)
-//                    .sendBroadcast(intent1);
-//        } else {
-//            //Build notification
-//            NotificationCompat.Builder noBuilder = new NotificationCompat.Builder(this)
-//                    .setSmallIcon(R.mipmap.ic_launcher)
-//                    .setContentText("My GCM message :X:X")
-//                    .setContentText(message)
-//                    .setAutoCancel(true)
-//                    .setContentIntent(pendingIntent);
-//
-//            NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-//            notificationManager.notify(0, noBuilder.build());
-//
-//        }
+        if (HostGameActivity.isFront) {
+            Intent requestIntent = new Intent("suibian");
+            requestIntent.setAction("REQUEST");
+            requestIntent.putExtra("message", message);
+            LocalBroadcastManager.getInstance(this)
+                    .sendBroadcast(requestIntent);
+        } else {
+            //Build notification
+            NotificationCompat.Builder noBuilder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentText("My GCM message :X:X")
+                    .setContentText(message)
+                    .setAutoCancel(true)
+                    .setContentIntent(pendingIntent);
+
+            NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(0, noBuilder.build());
+
+        }
 
     }
 }
