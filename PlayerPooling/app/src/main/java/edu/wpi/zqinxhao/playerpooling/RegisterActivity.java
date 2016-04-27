@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,19 +16,29 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.PropertiesCredentials;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sns.AmazonSNSClient;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import edu.wpi.zqinxhao.playerpooling.DB.DynamoDBManager;
 import edu.wpi.zqinxhao.playerpooling.DB.DynamoDBManagerTask;
 import edu.wpi.zqinxhao.playerpooling.DB.DynamoDBManagerType;
 import edu.wpi.zqinxhao.playerpooling.gcm.GCMRegistrationIntentService;
+import edu.wpi.zqinxhao.playerpooling.model.Constants;
 import edu.wpi.zqinxhao.playerpooling.model.EncriptionUtils;
 import edu.wpi.zqinxhao.playerpooling.model.User;
+import edu.wpi.zqinxhao.playerpooling.sns.AmazonSNSClientWrapper;
+import edu.wpi.zqinxhao.playerpooling.sns.SampleMessageGenerator;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -41,6 +52,7 @@ public class RegisterActivity extends AppCompatActivity {
     private static boolean registerSuccess = false;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private String gcmToken;
+    private String EndpointARN;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +73,50 @@ public class RegisterActivity extends AppCompatActivity {
                 if(intent.getAction().equals(GCMRegistrationIntentService.REGISTRATION_SUCCESS)) {
                     //Registration success
                     gcmToken = intent.getStringExtra("token");
+                    new AsyncTask() {
+
+                        @Override
+                        protected Object doInBackground(Object[] params) {
+                            AmazonSNS sns = null;
+                            try {
+                                AssetManager am = getApplicationContext().getAssets();
+                                InputStream is = am.open("AwsCredentials.properties");
+                                PropertiesCredentials pc = new PropertiesCredentials(is);
+                                sns = new AmazonSNSClient(pc);
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            sns.setEndpoint("https://sns.us-west-2.amazonaws.com");
+
+                            try {
+                                AmazonSNSClientWrapper snsClientWrapper = new AmazonSNSClientWrapper(sns);
+
+                                EndpointARN = snsClientWrapper.createPlatformEndpoint(
+                                        "CustomData - Useful to store endpoint specific data",
+                                        gcmToken, Constants.SNS_PLATFORM_APPLICATION_ARN);
+
+                            } catch (AmazonServiceException ase) {
+                                System.out
+                                        .println("Caught an AmazonServiceException, which means your request made it "
+                                                + "to Amazon SNS, but was rejected with an error response for some reason.");
+                                System.out.println("Error Message:    " + ase.getMessage());
+                                System.out.println("HTTP Status Code: " + ase.getStatusCode());
+                                System.out.println("AWS Error Code:   " + ase.getErrorCode());
+                                System.out.println("Error Type:       " + ase.getErrorType());
+                                System.out.println("Request ID:       " + ase.getRequestId());
+                            } catch (AmazonClientException ace) {
+                                System.out
+                                        .println("Caught an AmazonClientException, which means the client encountered "
+                                                + "a serious internal problem while trying to communicate with SNS, such as not "
+                                                + "being able to access the network.");
+                                System.out.println("Error Message: " + ace.getMessage());
+                            }
+                            return true;
+                        }
+                    }.execute(null, null, null);
+
+
                 } else if(intent.getAction().equals(GCMRegistrationIntentService.REGISTRATION_ERROR)) {
                     //Registration error
                     Toast.makeText(getApplicationContext(), "GCM registration error!!!", Toast.LENGTH_LONG).show();
@@ -103,7 +159,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 boolean success = false;
 
-                user = createUser(name, email, hashPassword, age, gcmToken);
+                user = createUser(name, email, hashPassword, age, EndpointARN);
                 try {
                     if (!isEmailValid(email)) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
@@ -191,14 +247,14 @@ public class RegisterActivity extends AppCompatActivity {
         client.disconnect();
     }
 
-    public User createUser(String name, String email, String hashPassword, int age, String gcmToken) {
+    public User createUser(String name, String email, String hashPassword, int age, String endpointARN) {
         User u=new User();
         u.setName(name);
         //this.name = name;
         u.setEmail(email);
         u.setHashPassword(hashPassword);
         u.setAge(age);
-        u.setGcmToken(gcmToken);
+        u.setEndpointARN(endpointARN);
         return u;
     }
 

@@ -10,7 +10,7 @@ public class User {
     private String email;
     private String hashPassword;
     private int age;
-    private String gcmToken;
+    private String endpointARN;
 
 
     @DynamoDBAttribute(attributeName = "name")
@@ -52,12 +52,12 @@ public class User {
         this.age = age;
     }
 
-    @DynamoDBAttribute(attributeName = "gcmToken")
-    public String getGcmToken() {
-        return gcmToken;
+    @DynamoDBAttribute(attributeName = "endpointARN")
+    public String getEndpointARN() {
+        return endpointARN;
     }
 
-    public void setGcmToken(String gcmToken) {
-        this.gcmToken = gcmToken;
+    public void setEndpointARN(String endpointARN) {
+        this.endpointARN = endpointARN;
     }
 }
