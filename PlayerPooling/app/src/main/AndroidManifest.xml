@@ -79,14 +79,14 @@
                 <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
-<<<<<<< HEAD
+
         <service
             android:name=".model.googlePlaces.FetchAddressIntentService"
             android:exported="false"/>
-=======
+
 
         <activity android:name=".HostGameActivity"></activity>
->>>>>>> 7296bab20b4175642d7c2cf70de5b38fc83bdc7a
+
     </application>
 
 </manifest>
