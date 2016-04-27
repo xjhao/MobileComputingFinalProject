@@ -80,18 +80,26 @@ public class CreateGameActivity extends AppCompatActivity {
         gameCreated.setHostNumber(etPhone);
         gameCreated.setDescription(etDescription);
         gameCreated.setHost(LoginActivity.getUserEmail());
+
         gameCreated.setGameStatus(Constants.ACTIVE_STATE);
     }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if(requestCode == 1){
             //System.out.println(data.getStringExtra("locationNAmeReturned"));
             LatLng ltlg=data.getParcelableExtra("locationReturned");
-            latlng.put(Constants.LATITUDE,String.valueOf(ltlg.latitude));
+            latlng.put(Constants.LATITUDE, String.valueOf(ltlg.latitude));
             latlng.put(Constants.LONGTITUDE, String.valueOf(ltlg.longitude));
 
             gameCreated.setLocation(latlng);
 
             String locationName= data.getStringExtra("locationName");
+
+            if(locationName==null || locationName.isEmpty()){
+                gameCreated.setGameAddress("Location Latitude: "+ ltlg.latitude+ ", Longtitude"+ ltlg.longitude);
+            }else{
+                gameCreated.setGameAddress(locationName);
+            }
             EditText etLocationName= (EditText) findViewById(R.id.etLocation);
             etLocationName.setText(locationName);
         }

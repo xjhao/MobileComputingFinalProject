@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
@@ -21,10 +21,10 @@
         android:textColor="#272727" />
 
     <TextView
-        android:id="@+id/gameDescription"
-        android:layout_below="@id/gameTitle"
+        android:id="@+id/gameLocation"
+        android:layout_below="@id/gameLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
 
-</RelativeLayout>
+</LinearLayout>

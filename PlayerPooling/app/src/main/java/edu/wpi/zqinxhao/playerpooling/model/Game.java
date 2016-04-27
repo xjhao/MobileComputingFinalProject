@@ -31,6 +31,10 @@ public class Game implements Parcelable{
 
     private Map<String, String> location;
 
+
+
+    private String gameAddress;
+
     private String description;
 
     private String game_status;
@@ -80,6 +84,13 @@ public class Game implements Parcelable{
         return location;
     }
 
+    public void setGameAddress(String gameAddress) {
+        this.gameAddress = gameAddress;
+    }
+    @DynamoDBAttribute(attributeName = "gameAddress")
+    public String getGameAddress() {
+        return gameAddress;
+    }
     public void setLocation(Map<String, String> location) {
         this.location = location;
     }
@@ -127,6 +138,7 @@ public class Game implements Parcelable{
             dest.writeString(s);
             dest.writeString(location.get(s));
         }
+        dest.writeString(gameAddress);
         dest.writeString(description);
         dest.writeString(game_status);
     }
@@ -152,6 +164,7 @@ public class Game implements Parcelable{
         for (int i = 0; i < count; i++) {
             location.put(in.readString(), in.readString());
         }
+        gameAddress=in.readString();
         description = in.readString();
         game_status=in.readString();
     }
