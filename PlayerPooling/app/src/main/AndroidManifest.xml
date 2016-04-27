@@ -80,7 +80,13 @@
             </intent-filter>
         </service>
 
+        <service
+            android:name=".model.googlePlaces.FetchAddressIntentService"
+            android:exported="false"/>
+
+
         <activity android:name=".HostGameActivity"></activity>
+
     </application>
 
 </manifest>

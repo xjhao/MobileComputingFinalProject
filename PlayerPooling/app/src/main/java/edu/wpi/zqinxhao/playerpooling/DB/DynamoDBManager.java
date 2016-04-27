@@ -115,6 +115,8 @@ public class DynamoDBManager {
             expressionForOnlyActiveGames.put(":val", new AttributeValue().withS(Constants.ACTIVE_STATE));
             DynamoDBScanExpression expression = new DynamoDBScanExpression().withFilterExpression("game_status = :val").withExpressionAttributeValues(expressionForOnlyActiveGames);
             List<Game> scanResult= mapper.scan(Game.class, expression);
+            ArrayList<Game> result=  new ArrayList<Game>();
+            //result.addAll(scanResult);
 
             for(Game g: scanResult){
                 double distanceMax=Double.parseDouble(g.getMaxDistance());
@@ -122,13 +124,12 @@ public class DynamoDBManager {
                 Map<String, String> requesterLoc= new HashMap<String, String>() ;
                 requesterLoc.put(Constants.LATITUDE, String.valueOf(location.latitude));
                 requesterLoc.put(Constants.LONGTITUDE, String.valueOf(location.longitude));
-                if(DistanceUtils.getDistance(requesterLoc,gameLoc)>distanceMax){
-                    scanResult.remove(g);
+                if(DistanceUtils.getDistance(requesterLoc,gameLoc)<distanceMax){
+                    result.add(g);
                 }
             }
-            ArrayList<Game> result=  new ArrayList<Game>();
-            result.addAll(scanResult);
-            return scanResult==null?new ArrayList<Game>(): result;
+
+            return  result;
 
         }catch(AmazonServiceException ex){
             Log.e(TAG, "Error when authenticate User");

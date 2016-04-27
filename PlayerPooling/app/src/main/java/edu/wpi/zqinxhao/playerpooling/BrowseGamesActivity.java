@@ -72,7 +72,7 @@ class GameAdapter extends RecyclerView.Adapter<GameAdapter.MyViewHolder>  {
     public void onBindViewHolder(GameAdapter.MyViewHolder holder, int position) {
         Game game=gameList.get(position);
         holder.gameTitle.setText(game.getGameName());
-        holder.gameDescription.setText(game.getDescription());
+        holder.gameLocation.setText(game.getGameAddress());
     }
 
     @Override
@@ -84,13 +84,13 @@ class GameAdapter extends RecyclerView.Adapter<GameAdapter.MyViewHolder>  {
 
     class MyViewHolder extends  RecyclerView.ViewHolder {
         TextView gameTitle;
-        TextView gameDescription;
+        TextView gameLocation;
 
         public MyViewHolder(View itemView) {
 
             super(itemView);
             gameTitle=(TextView) itemView.findViewById(R.id.gameTitle);
-            gameDescription = (TextView) itemView.findViewById(R.id.gameDescription);
+            gameLocation = (TextView) itemView.findViewById(R.id.gameLocation);
 
 
         }

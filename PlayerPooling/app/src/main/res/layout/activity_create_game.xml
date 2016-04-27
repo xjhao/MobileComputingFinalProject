@@ -41,7 +41,7 @@
             android:id="@+id/etMaxDistance"
             android:layout_row="2"
             android:layout_column="0"
-            android:hint="Maximum distance you allow" />
+            android:hint="Maximum distance you allow, unit as meter" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/etLocation"
                 android:layout_weight="0.99"
-                android:hint="Game location" />
+                android:hint="restaurant, cafe, school etc..." />
 
             <ImageButton
                 android:layout_width="wrap_content"

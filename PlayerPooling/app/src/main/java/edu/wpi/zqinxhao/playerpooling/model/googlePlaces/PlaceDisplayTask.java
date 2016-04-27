@@ -56,6 +56,7 @@ public class PlaceDisplayTask extends AsyncTask<Object, Integer, List<HashMap<St
             markerOptions.title(placeName + " : " + vicinity);
             googleMap.addMarker(markerOptions);
         }
+
     }
 
     public boolean onMarkerClick(Marker marker) {
