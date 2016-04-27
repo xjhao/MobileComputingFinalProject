@@ -11,9 +11,11 @@ import com.amazonaws.services.sns.model.CreatePlatformEndpointResult;
 import com.amazonaws.services.sns.model.CreateTopicRequest;
 import com.amazonaws.services.sns.model.CreateTopicResult;
 import com.amazonaws.services.sns.model.DeletePlatformApplicationRequest;
+import com.amazonaws.services.sns.model.DeleteTopicRequest;
 import com.amazonaws.services.sns.model.MessageAttributeValue;
 import com.amazonaws.services.sns.model.PublishRequest;
 import com.amazonaws.services.sns.model.PublishResult;
+import com.amazonaws.services.sns.model.SubscribeRequest;
 
 import edu.wpi.zqinxhao.playerpooling.model.Constants;
 import edu.wpi.zqinxhao.playerpooling.sns.SampleMessageGenerator.Platform;
@@ -53,6 +55,14 @@ public class AmazonSNSClientWrapper {
         return createTopicResult.getTopicArn();
     }
 
+    public void deleteplatformTopic(String topicARN) {
+        //delete an SNS topic
+        DeleteTopicRequest deleteTopicRequest = new DeleteTopicRequest(topicARN);
+        snsClient.deleteTopic(deleteTopicRequest);
+        //get request id for DeleteTopicRequest from SNS metadata
+        System.out.println("DeleteTopicRequest - " + snsClient.getCachedResponseMetadata(deleteTopicRequest));
+    }
+
     public PublishResult publishToTopic(String topicArn, Platform platform,
     Map<Platform, Map<String, MessageAttributeValue>> attributesMap, String androidMessage) {
         PublishRequest publishRequest = new PublishRequest();
@@ -87,6 +97,14 @@ public class AmazonSNSClientWrapper {
 
         publishRequest.setMessage(message);
         return snsClient.publish(publishRequest);
+    }
+
+    public void subscribeToTopic(String topicARN, String endpointARN) {
+        //subscribe to an SNS topic
+        SubscribeRequest subRequest = new SubscribeRequest(topicARN, "application", endpointARN);
+        snsClient.subscribe(subRequest);
+        //get request id for SubscribeRequest from SNS metadata
+        System.out.println("SubscribeRequest - " + snsClient.getCachedResponseMetadata(subRequest));
     }
 
     public String createPlatformEndpoint(String customData, String platformToken,

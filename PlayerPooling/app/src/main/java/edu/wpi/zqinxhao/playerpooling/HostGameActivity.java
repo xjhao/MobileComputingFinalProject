@@ -70,8 +70,10 @@ public class HostGameActivity extends AppCompatActivity {
                             AmazonSNSClientWrapper snsClientWrapper = new AmazonSNSClientWrapper(sns);
                             String topicARN = snsClientWrapper.createPlatformTopic("testTopic");
                             //snsClientWrapper.publishToEndpoint(endpointARN, Platform.GCM, attributesMap, "hello baobao");
-                            snsClientWrapper.publishToTopic(topicARN, Platform.GCM, attributesMap, "oh yeah!");
+                            //snsClientWrapper.publishToTopic(topicARN, Platform.GCM, attributesMap, "oh yeah!");
                             //snsClientWrapper.ptt(topicARN, Platform.GCM, attributesMap, "ohhoho");
+                            //snsClientWrapper.deleteplatformTopic(topicARN);
+                            snsClientWrapper.subscribeToTopic(topicARN, endpointARN);
 
                         } catch (AmazonServiceException ase) {
                             System.out
