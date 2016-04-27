@@ -16,4 +16,9 @@ public class Constants {
     public static final String LONGTITUDE="longitude";//jing du
     public static final String LATITUDE="latitude";// wei du
     public static final String GOOGLE_API_KEY = "AIzaSyDdvysQRBY90cIkqtVsz4qN3uJnsExdnpE";
+
+    public static final String GCM_SERVER_API_ID = "AIzaSyD6dQqQN27e614XK0OsjxXP0uAjsdk3qCU";
+    public static final String GCM_SENDER_ID = "262569811996";
+
+    public static final String SNS_PLATFORM_APPLICATION_ARN = "arn:aws:sns:us-west-2:872831404379:app/GCM/PlayerPooling";
 }

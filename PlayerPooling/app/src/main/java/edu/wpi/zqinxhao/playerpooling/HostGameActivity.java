@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,12 +19,17 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sns.model.MessageAttributeValue;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
-import edu.wpi.zqinxhao.playerpooling.sns.SNSMobilePush;
+import edu.wpi.zqinxhao.playerpooling.sns.AmazonSNSClientWrapper;
+import edu.wpi.zqinxhao.playerpooling.sns.SampleMessageGenerator;
+
+import static edu.wpi.zqinxhao.playerpooling.sns.SampleMessageGenerator.*;
 
 public class HostGameActivity extends AppCompatActivity {
     public static boolean isFront;
@@ -35,13 +39,17 @@ public class HostGameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host_game);
 
-        final EditText etToken = (EditText) findViewById(R.id.etToken);
         final Button bPushNotification = (Button) findViewById(R.id.bPushNotification);
+
+
+        final Map<SampleMessageGenerator.Platform, Map<String, MessageAttributeValue>> attributesMap = new HashMap<SampleMessageGenerator.Platform, Map<String, MessageAttributeValue>>();
+        attributesMap.put(Platform.GCM, null);
+
 
         bPushNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               final  String token = etToken.getText().toString();
+
                 new AsyncTask(){
                     @Override
                     protected Object doInBackground(Object[] params) {
@@ -58,9 +66,12 @@ public class HostGameActivity extends AppCompatActivity {
                         sns.setEndpoint("https://sns.us-west-2.amazonaws.com");
 
                         try {
-                            SNSMobilePush sample = new SNSMobilePush(sns);
-			                /* TODO: Uncomment the services you wish to use. */
-                            sample.demoAndroidAppNotification(token);
+                            String endpointARN = LoginActivity.getLoginUser().getEndpointARN();
+                            AmazonSNSClientWrapper snsClientWrapper = new AmazonSNSClientWrapper(sns);
+                            String topicARN = snsClientWrapper.createPlatformTopic("testTopic");
+                            //snsClientWrapper.publishToEndpoint(endpointARN, Platform.GCM, attributesMap, "hello baobao");
+                            snsClientWrapper.publishToTopic(topicARN, Platform.GCM, attributesMap, "oh yeah!");
+                            //snsClientWrapper.ptt(topicARN, Platform.GCM, attributesMap, "ohhoho");
 
                         } catch (AmazonServiceException ase) {
                             System.out
