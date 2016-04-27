@@ -23,13 +23,7 @@ import edu.wpi.zqinxhao.playerpooling.model.Game;
  */
 public class BrowseGamesActivity extends AppCompatActivity  {
 
-    public List<Game> getGameList() {
-        return gameList;
-    }
 
-    public void setGameList(List<Game> gameList) {
-        this.gameList = gameList;
-    }
 
     private List<Game> gameList = new ArrayList<Game>();
     private RecyclerView recyclerView;
@@ -51,48 +45,72 @@ public class BrowseGamesActivity extends AppCompatActivity  {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(gameAdapter);
     }
+    class GameAdapter extends RecyclerView.Adapter<MyViewHolder> implements View.OnClickListener  {
+
+        private List<Game> gameList;
 
 
-}
+        public GameAdapter(List<Game> games){
+            this.gameList = games;
+        }
+        @Override
+        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.game, parent, false);
+            return new MyViewHolder(itemView);
+        }
 
-class GameAdapter extends RecyclerView.Adapter<GameAdapter.MyViewHolder>  {
+        @Override
+        public void onBindViewHolder(MyViewHolder holder, int position) {
+            Game game=gameList.get(position);
+            holder.gameTitle.setText(game.getGameName());
+            holder.gameLocation.setText(game.getGameAddress());
+            holder.bindGame(game);
+        }
 
-    private List<Game> gameList;
+        @Override
+        public int getItemCount() {
+            return gameList.size();
+        }
 
-    public GameAdapter(List<Game> games){
-        this.gameList = games;
+        @Override
+        public void onClick(View v) {
+
+        }
+        public List<Game> getGameList() {
+            return gameList;
+        }
+
+        public void setGameList(List<Game> gameList) {
+            this.gameList = gameList;
+        }
+
+
     }
-    @Override
-    public GameAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.game, parent, false);
-        return new MyViewHolder(itemView);
-    }
-
-    @Override
-    public void onBindViewHolder(GameAdapter.MyViewHolder holder, int position) {
-        Game game=gameList.get(position);
-        holder.gameTitle.setText(game.getGameName());
-        holder.gameLocation.setText(game.getGameAddress());
-    }
-
-    @Override
-    public int getItemCount() {
-        return gameList.size();
-    }
-
-
-
-    class MyViewHolder extends  RecyclerView.ViewHolder {
+    class  MyViewHolder extends  RecyclerView.ViewHolder implements View.OnClickListener{
         TextView gameTitle;
         TextView gameLocation;
+        private Game game;
+
 
         public MyViewHolder(View itemView) {
 
             super(itemView);
+            itemView.setOnClickListener(this);
             gameTitle=(TextView) itemView.findViewById(R.id.gameTitle);
             gameLocation = (TextView) itemView.findViewById(R.id.gameLocation);
 
+        }
+        public void bindGame(Game g){
+            this.game=g;
+        }
 
+        @Override
+        public void onClick(View v) {
+            Intent intent= new Intent(BrowseGamesActivity.this, GameDisplayActivity.class);
+            intent.putExtra("GAME_SELECTED",game);
+            startActivity(intent);
         }
     }
+
 }
+

@@ -31,13 +31,15 @@ public class Game implements Parcelable{
 
     private Map<String, String> location;
 
-
-
     private String gameAddress;
 
     private String description;
 
     private String game_status;
+
+
+    @DynamoDBAttribute(attributeName="hostArn")
+    private String hostArn;
 
     @DynamoDBHashKey(attributeName="host")
     public String getHost() {
@@ -119,6 +121,15 @@ public class Game implements Parcelable{
     public void setHostNumber(String hostNumber) {
         this.hostNumber = hostNumber;
     }
+
+    public void setHostArn(String hostArn) {
+        this.hostArn = hostArn;
+    }
+    @DynamoDBAttribute(attributeName = "hostArn")
+    public String getHostArn() {
+        return hostArn;
+    }
+
 
     @Override
     public int describeContents() {

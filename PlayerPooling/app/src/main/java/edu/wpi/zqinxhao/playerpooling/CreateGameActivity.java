@@ -79,7 +79,7 @@ public class CreateGameActivity extends AppCompatActivity {
         gameCreated.setHostNumber(etPhone);
         gameCreated.setDescription(etDescription);
         gameCreated.setHost(LoginActivity.getUserEmail());
-
+        gameCreated.setHostArn(LoginActivity.getLoginUser().getEndpointARN());
         gameCreated.setGameStatus(Constants.ACTIVE_STATE);
     }
 
